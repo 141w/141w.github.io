@@ -20,6 +20,10 @@ export default function Home() {
     () => sessionStorage.getItem('boot-complete') !== null
   )
 
+  const handleBootComplete = useCallback(() => {
+    setBooted(true)
+  }, [])
+
   useEffect(() => {
     if (!booted) return
 
@@ -40,21 +44,36 @@ export default function Home() {
     return () => observer.disconnect()
   }, [booted])
 
-  const handleTerminalCommand = useCallback((cmd: string) => {
-    if (cmd.startsWith('open ')) {
-      const name = cmd.split(' ')[1]
-      const el = document.querySelector(`#project-${name}`)
-      if (el) {
-        setTimeout(() => {
-          el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        }, 100)
-      }
-    }
-  }, [])
+  // open 命令的 scrollIntoView 仅保留在 InteractiveTerminal 内，避免重复滚动
+  const handleTerminalCommand = useCallback((_cmd: string) => {}, [])
 
   return (
     <>
-      {!booted && <BootSequence onComplete={() => setBooted(true)} />}
+      {!booted && <BootSequence onComplete={handleBootComplete} />}
+
+      <a
+        href="#hero"
+        aria-label="回到顶部"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          zIndex: 100,
+          display: 'block',
+          padding: '1rem',
+          opacity: booted ? 1 : 0,
+          transition: 'opacity 0.5s',
+          pointerEvents: booted ? 'auto' : 'none',
+        }}
+      >
+        <img
+          src="/logo.svg"
+          alt="wwq logo"
+          width={96}
+          height={57}
+          style={{ display: 'block', height: '1.75rem', width: 'auto' }}
+        />
+      </a>
 
       <nav
         style={{
@@ -111,19 +130,18 @@ export default function Home() {
           transition: 'opacity 0.8s',
         }}
       >
-        <div id="hero">
-          <Hero />
-        </div>
+        {/* section id 只保留在各 section 组件内，避免重复 id */}
+        <Hero />
 
-        <div className="section-container section-padding" id="projects">
+        <div className="section-container section-padding">
           <Projects />
         </div>
 
-        <div className="section-container section-padding" id="stack">
+        <div className="section-container section-padding">
           <TechStack />
         </div>
 
-        <div className="section-container section-padding" id="about">
+        <div className="section-container section-padding">
           <About />
         </div>
 

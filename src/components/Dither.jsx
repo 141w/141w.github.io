@@ -237,7 +237,17 @@ export default function Dither({
 
     registerRAF('dither', render);
 
+    const handleVisibility = () => {
+      if (document.hidden) {
+        unregisterRAF('dither');
+      } else {
+        registerRAF('dither', render);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
     return () => {
+      document.removeEventListener('visibilitychange', handleVisibility);
       unregisterRAF('dither');
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);

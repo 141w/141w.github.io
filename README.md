@@ -37,7 +37,7 @@ git push
 站点同时跑在两个地方：
 
 - **GitHub Pages**：<https://141w.github.io> —— `push` 到 `main` 后由 Actions 自动构建发布（`.github/workflows/deploy.yml`）。
-- **自建服务器**：<http://wweiqi.devs.surf>（devs.surf 免费域名，A 记录指向服务器 IP）—— nginx 托管静态文件，需要手动同步；也仍可用 `http://47.122.118.177/` 直连。
+- **自建服务器**：<http://wweiqi.devs.surf>（devs.surf 免费域名，A 记录指向服务器）—— nginx 托管静态文件，需要手动同步。
 
 一条命令同时更新两处：
 

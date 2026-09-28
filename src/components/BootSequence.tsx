@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 
 interface BootLine {
@@ -23,12 +23,14 @@ interface BootSequenceProps {
 export default function BootSequence({ onComplete }: BootSequenceProps) {
   const [visibleLines, setVisibleLines] = useState(0)
   const [done, setDone] = useState(false)
+  const onCompleteRef = useRef(onComplete)
+  onCompleteRef.current = onComplete
 
   useEffect(() => {
     const timeouts: ReturnType<typeof setTimeout>[] = []
     const hasBooted = sessionStorage.getItem('boot-complete')
     if (hasBooted) {
-      onComplete()
+      onCompleteRef.current()
       return
     }
 
@@ -45,7 +47,7 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
             setDone(true)
             sessionStorage.setItem('boot-complete', 'true')
             const t3 = setTimeout(() => {
-              onComplete()
+              onCompleteRef.current()
             }, 800)
             timeouts.push(t3)
           }, 500)
@@ -59,7 +61,7 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
     return () => {
       timeouts.forEach(clearTimeout)
     }
-  }, [onComplete])
+  }, [])
 
   return (
     <AnimatePresence>
