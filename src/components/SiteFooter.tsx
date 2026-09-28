@@ -3,11 +3,13 @@ import { profile } from '../data/profile'
 import { initVisitCounter, loadVisitStats } from '../lib/visitCounter'
 
 /**
- * 访问人次的真实来源：服务器定时任务生成的 stats.json
- * （见 scripts/visit-stats.py）。Pages 那条腿默认没有这个文件，
- * 读不到就整块不显示，不编数字。
+ * 访问人次的真实来源：服务器定时任务生成的 stats.json（见 scripts/visit-stats.py）。
+ * Pages 那条腿没有这个文件，所以没显式配 VITE_STATS_URL 且域名是 *.github.io 时
+ * 干脆不请求，免得每次加载在 console 留一条 404。读不到就整块不显示，不编数字。
  */
-const STATS_URL = (import.meta.env?.VITE_STATS_URL as string) || '/stats.json'
+const configuredStatsUrl = import.meta.env?.VITE_STATS_URL as string | undefined
+const STATS_URL =
+  configuredStatsUrl ?? (window.location.hostname.endsWith('.github.io') ? '' : '/stats.json')
 
 /** 页脚：品牌行 + 访问人次滚轮 + 联系入口 + 构建说明 */
 export default function SiteFooter() {
@@ -15,6 +17,7 @@ export default function SiteFooter() {
   const [visits, setVisits] = useState<number | null>(null)
 
   useEffect(() => {
+    if (!STATS_URL) return
     let alive = true
     loadVisitStats(STATS_URL).then(n => {
       if (alive) setVisits(n)
