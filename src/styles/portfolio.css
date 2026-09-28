@@ -62,10 +62,10 @@ a:hover { text-decoration: underline; }
   gap: 1rem;
   padding: 0.85rem var(--edge);
   border-bottom: 1px solid var(--border);
-  background: rgba(0, 0, 0, 0.86);
-  backdrop-filter: blur(8px);
+  /* 纯黑不透明：半透明 + backdrop-filter 会让滚动内容透上来，导航读不清 */
+  background: var(--bg);
   position: sticky;
-  top: 28px;
+  top: 0;
   z-index: 30;
 }
 
