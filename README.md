@@ -50,6 +50,16 @@ git push
 
 首次使用：`cp .deploy.env.example .deploy.env` 并填入服务器地址（该文件已被 gitignore，不会进仓库）。脚本末尾会自动做远端自检，首页和主 JS 都返回 200 才算成功。
 
+同步用的是 `rsync --delete`，会删掉远端多出来的文件。第一次在新机器上跑之前，先看一眼远端布局，
+确认同一个 web root 下没有别的应用：
+
+```bash
+source .deploy.env
+ssh "$WEB_REMOTE" "ls -la $WEB_DIR; grep -rn study /etc/nginx/conf.d/ /etc/nginx/sites-enabled/ | head"
+```
+
+脚本默认排除 `study/` 与 `stats.json`；布局不同就在 `.deploy.env` 里用 `RSYNC_EXCLUDE` 覆盖。
+
 注意 `vite.config.ts` 里 `base` 必须是 `'/'`：两处托管都在根路径，改成子路径会导致资源 404、整站白屏。
 
 ## 访问人次（stats.json）

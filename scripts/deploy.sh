@@ -49,7 +49,8 @@ echo "    目录: $WEB_DIR"
 echo "    来源: $ROOT/dist/"
 if [ "$DRY_RUN" = 1 ]; then
   echo "==> dry-run：跳过 rsync / 远端自检 / git push"
-  echo "    提示: 去掉 --dry-run 才会真正同步。可用: rsync -azn --delete dist/ \"$WEB_REMOTE:$WEB_DIR/\""
+  echo "    提示: 去掉 --dry-run 才会真正同步。想看差异可自己跑："
+  echo "      rsync -azn --delete --exclude 'study/' --exclude 'stats.json' dist/ \"$WEB_REMOTE:$WEB_DIR/\""
   exit 0
 fi
 
@@ -61,7 +62,15 @@ case "$confirm" in
 esac
 
 echo "==> 同步到 $WEB_REMOTE:$WEB_DIR"
-rsync -az --delete dist/ "$WEB_REMOTE:$WEB_DIR/"
+# --delete 会删掉远端多余文件，所以先把不属于构建产物的东西排掉：
+#   study/       同一 web root 下如果放着 Study Copilot 应用，不能被这次同步带走
+#   stats.json   服务器定时任务生成的访问人次，仓库里没有，别被 --delete 删了
+# 远端布局若与此不同，可在 .deploy.env 里用 RSYNC_EXCLUDE 覆盖（空格分隔）。
+EXCLUDE_PATTERN="${RSYNC_EXCLUDE:-study/ stats.json}"
+EXCLUDE_ARGS=()
+for pattern in $EXCLUDE_PATTERN; do EXCLUDE_ARGS+=(--exclude "$pattern"); done
+echo "    排除: ${EXCLUDE_PATTERN}"
+rsync -az --delete "${EXCLUDE_ARGS[@]}" dist/ "$WEB_REMOTE:$WEB_DIR/"
 
 echo "==> 远端自检"
 ssh "$WEB_REMOTE" "code=\$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1/); \
