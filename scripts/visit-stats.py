@@ -143,7 +143,7 @@ def write_atomic(out_path: str, payload: dict) -> None:
 def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--log', required=True, help='nginx 访问日志路径（会一并读取轮转文件）')
-    ap.add_argument('--out', required=True, help='输出 stats.json 的路径，需在站点根目录内')
+    ap.add_argument('--out', default=None, help='输出 stats.json 的路径，需在站点根目录内；--dry-run 时可不给')
     ap.add_argument('--host', default=None, help='只统计该 host 的请求，例如 wweiqi.devs.surf')
     ap.add_argument('--since', default=None, help='起始日期 YYYY-MM-DD，之前的日志不计入')
     ap.add_argument('--dry-run', action='store_true', help='只打印结果，不写文件')
@@ -167,6 +167,10 @@ def main(argv: list[str]) -> int:
     if args.dry_run:
         print(json.dumps({**payload, 'detail': detail}, ensure_ascii=False, indent=2))
         return 0
+
+    if not args.out:
+        print('真正写入需要 --out', file=sys.stderr)
+        return 2
 
     if not visits:
         # 一条都没算出来：宁可不写，让前端整块不显示，也不上线一个 0

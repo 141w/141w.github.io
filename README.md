@@ -97,9 +97,17 @@ scp scripts/visit-stats.py "$WEB_REMOTE":/usr/local/bin/
 
 ```cron
 10 4 * * * root python3 /usr/local/bin/visit-stats.py \
-  --log /var/log/nginx/ww.access.log --host wweiqi.devs.surf \
-  --since 2026-09-01 --out /var/www/ww/stats.json >> /var/log/visit-stats.log 2>&1
+  --log /var/log/nginx/ww.access.log --since 2026-09-01 \
+  --out /var/www/ww/stats.json >> /var/log/visit-stats.log 2>&1
 ```
+
+`--host` 这里**不要去掉了**：日志是站点独一份的（`access_log` 只挂在站点的 server 块上），
+再按 host 过滤会把以 IP 直连的访问也剔掉。
+
+另外两点实测结论：访问人次**只在自建服务器腿显示**。Pages 上没有这个文件，
+前端在 `*.github.io` 域名下压根不发请求（免得每次加载留一条 404），
+所以那条腿永远隐藏这一项，这是有意的取舍。统计口径是"独立访客·天"，
+从接入日志那天起算，第一天数字会很小，那是真的。
 
 先 `--dry-run` 跑一遍确认口径和条数再实际写。本地想要同样效果：`cp dist 里的 stats.json`，
 或给构建加 `VITE_STATS_URL=https://wweiqi.devs.surf/stats.json`（Pages 上没有这个文件时会自动隐藏）。
