@@ -14,7 +14,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
 SERVER_ENV="$ROOT/.deploy.env"
-[ -f "$SERVER_ENV" ] || { echo "缺少 $SERVER_ENV，请先复制 .deploy.env.example 并填写"; exit 1; }
+[ -f "$SERVER_ENV" ] || { echo "缺少 ${SERVER_ENV}，请先复制 .deploy.env.example 并填写"; exit 1; }
 # shellcheck disable=SC1090
 source "$SERVER_ENV"
 : "${WEB_REMOTE:?未设置 WEB_REMOTE，如 deploy@your-host}"
@@ -34,7 +34,7 @@ done
 
 # 非 root 提示（不强制失败，避免打断已有配置）
 if [[ "$WEB_REMOTE" == root@* ]]; then
-  echo "警告: WEB_REMOTE 使用 root（$WEB_REMOTE）。建议改用非特权部署账号（见 .deploy.env.example）。"
+  echo "警告: WEB_REMOTE 使用 root（${WEB_REMOTE}）。建议改用非特权部署账号（见 .deploy.env.example）。"
 fi
 
 if [ "$BUILD" = 1 ]; then
