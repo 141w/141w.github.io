@@ -2,203 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --text: #9ca3af;
-  --text-h: #f3f4f6;
-  --bg: #000;
-  --border: #2e303a;
-  --code-bg: #1f2028;
-  --accent: #c084fc;
-  --accent-bg: rgba(192, 132, 252, 0.15);
-  --accent-border: rgba(192, 132, 252, 0.5);
-  --social-bg: rgba(47, 48, 58, 0.5);
-  --green: #4ade80;
-  --green-dim: rgba(74, 222, 128, 0.3);
+/*
+ * 站点视觉（严格单色 token、排版、各组件样式）都在 src/styles/portfolio.css，
+ * 由 main.tsx 在本文件之后引入。
+ * 未分层的规则优先级高于 @layer base，所以这里不要再定义颜色 token，
+ * 否则会盖掉单色主题。
+ */
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+#root {
+  width: 100%;
+  min-height: 100vh;
 }
 
-@layer base {
-  html {
-    scroll-behavior: smooth;
-  }
-
-  body {
-    margin: 0;
-    background: transparent;
-    color: var(--text);
-    font: 16px/1.6 var(--mono);
-    letter-spacing: -0.01em;
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
-  }
-
-  #root {
-    width: 100%;
-    min-height: 100vh;
-  }
-
-  ::selection {
-    background: var(--accent-bg);
-    color: var(--text-h);
-  }
-
-  ::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: #000;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: #2e303a;
-    border-radius: 999px;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: #4b4d55;
-  }
-}
-
-@layer utilities {
-  .text-gradient {
-    background: linear-gradient(135deg, #c084fc, #818cf8, #38bdf8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .terminal-window {
-    position: relative;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
-    background: rgba(255, 255, 255, 0.02);
-  }
-
-  .terminal-window::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(255, 255, 255, 0.015);
-    backdrop-filter: blur(12px) saturate(1.2);
-    -webkit-backdrop-filter: blur(12px) saturate(1.2);
-    z-index: 0;
-    pointer-events: none;
-    border-radius: inherit;
-  }
-
-  .terminal-window > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  .terminal-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    border-bottom: 1px solid var(--border);
-    background: rgba(255, 255, 255, 0.02);
-  }
-
-  .terminal-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-  }
-
-  .terminal-body {
-    padding: 20px;
-  }
-
-  .terminal-prompt {
-    color: var(--green);
-    font-family: var(--mono);
-    font-size: 0.875rem;
-  }
-
-  .terminal-cmd {
-    color: var(--text-h);
-    font-family: var(--mono);
-    font-size: 0.875rem;
-  }
-
-  .terminal-output {
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 0.8125rem;
-    line-height: 1.7;
-  }
-
-  .terminal-comment {
-    color: #6b7280;
-    font-style: italic;
-  }
-
-  .terminal-key {
-    color: var(--accent);
-  }
-
-  .terminal-string {
-    color: var(--green);
-  }
-
-  .cursor-blink {
-    display: inline-block;
-    width: 8px;
-    height: 1.1em;
-    background: var(--green);
-    animation: blink 1s step-end infinite;
-    vertical-align: text-bottom;
-    margin-left: 2px;
-  }
-
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-  }
-
-  .section-container {
-    @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
-  }
-
-  .section-padding {
-    @apply py-16 sm:py-24;
-  }
-}
-
-h1, h2, h3, h4 {
-  font-family: var(--heading);
-  color: var(--text-h);
-}
-
-a {
-  color: var(--text);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  color: var(--accent);
-}
-
+/* 全局动效兜底：组件层另有各自的降级规则，这里保底压掉持续动画 */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-  }
-
-  .cursor-blink {
-    animation: none !important;
-    opacity: 1 !important;
   }
 }

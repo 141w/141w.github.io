@@ -1,29 +1,27 @@
-import { lazy, Suspense } from 'react'
+import type { ReactNode } from 'react'
+import SiteNav from '../components/SiteNav'
+import SiteBackground from '../components/SiteBackground'
+import SiteFooter from '../components/SiteFooter'
+import SplashGate from '../components/SplashGate'
+import { useBorderGlow } from '../hooks/useBorderGlow'
 
-const Dither = lazy(() => import('../components/Dither'))
+export default function MainLayout({ children }: { children: ReactNode }) {
+  useBorderGlow()
 
-interface MainLayoutProps {
-  children: React.ReactNode
-}
-
-export default function MainLayout({ children }: MainLayoutProps) {
   return (
-    <div style={{ position: 'relative', minHeight: '100vh' }}>
-      <Suspense fallback={null}>
-        <Dither
-          waveColor={[0.5, 0.5, 0.5]}
-          disableAnimation={false}
-          enableMouseInteraction={true}
-          mouseRadius={0.3}
-          colorNum={4}
-          waveAmplitude={0.3}
-          waveFrequency={3}
-          waveSpeed={0.05}
-        />
-      </Suspense>
-      <div style={{ position: 'relative', zIndex: 1 }}>
+    <>
+      <SiteBackground />
+      <SplashGate />
+
+      <header className="topbar">
+        <SiteNav />
+      </header>
+
+      <main id="app" className="app">
         {children}
-      </div>
-    </div>
+      </main>
+
+      <SiteFooter />
+    </>
   )
 }

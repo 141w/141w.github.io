@@ -1,156 +1,90 @@
-import { useState, useEffect, useCallback } from 'react'
-import BootSequence from '../components/BootSequence'
-import InteractiveTerminal from '../components/InteractiveTerminal'
-import Hero from '../sections/Hero'
-import Projects from '../sections/Projects'
-import TechStack from '../sections/TechStack'
-import About from '../sections/About'
-import Footer from '../sections/Footer'
+import { featuredProject } from '../data/projects'
+import { motto, skills } from '../data/profile'
+import Tags from '../components/Tags'
+import LikeButton from '../components/LikeButton'
+import TechTitle from '../components/TechTitle'
 
-const navItems = [
-  { label: 'home', href: '#hero' },
-  { label: 'projects', href: '#projects' },
-  { label: 'stack', href: '#stack' },
-  { label: 'about', href: '#about' },
-]
-
-export default function Home() {
-  const [active, setActive] = useState(0)
-  const [booted, setBooted] = useState(
-    () => sessionStorage.getItem('boot-complete') !== null
-  )
-
-  const handleBootComplete = useCallback(() => {
-    setBooted(true)
-  }, [])
-
-  useEffect(() => {
-    if (!booted) return
-
-    const sections = navItems.map(item => document.querySelector(item.href))
-    const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const idx = sections.indexOf(entry.target)
-            if (idx !== -1) setActive(idx)
-          }
-        })
-      },
-      { threshold: 0.3 }
-    )
-
-    sections.forEach(s => s && observer.observe(s))
-    return () => observer.disconnect()
-  }, [booted])
-
-  // open 命令的 scrollIntoView 仅保留在 InteractiveTerminal 内，避免重复滚动
-  const handleTerminalCommand = useCallback((_cmd: string) => {}, [])
+export default function HomePage() {
+  const f = featuredProject
 
   return (
     <>
-      {!booted && <BootSequence onComplete={handleBootComplete} />}
+      <section className="hero hero-bare">
+        <TechTitle text={motto.compact} srLabel={motto.srLabel} size={168} />
+        <div className="cta-row">
+          <a className="btn btn-primary" href="#/projects">
+            浏览项目
+          </a>
+          <a className="btn" href="#/contact">
+            取得联系
+          </a>
+        </div>
+      </section>
 
-      <a
-        href="#hero"
-        aria-label="回到顶部"
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          zIndex: 100,
-          display: 'block',
-          padding: '1rem',
-          opacity: booted ? 1 : 0,
-          transition: 'opacity 0.5s',
-          pointerEvents: booted ? 'auto' : 'none',
-        }}
-      >
-        <img
-          src="/logo.svg"
-          alt="wwq logo"
-          width={96}
-          height={57}
-          style={{ display: 'block', height: '1.75rem', width: 'auto' }}
-        />
-      </a>
+      <section className="section">
+        <h2>// 精选项目</h2>
+        <article className="featured">
+          <div className="card-head">
+            <h3>
+              <a href={`#/projects/${f.id}`}>
+                {f.title}
+                <span className="badge">FEATURED</span>
+              </a>
+            </h3>
+            <LikeButton id={f.id} name={f.title} likes={f.likes} size={26} />
+          </div>
 
-      <nav
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 100,
-          display: 'flex',
-          justifyContent: 'center',
-          padding: '1rem 0',
-          opacity: booted ? 1 : 0,
-          transition: 'opacity 0.5s',
-          pointerEvents: booted ? 'auto' : 'none',
-        }}
-      >
-        <div
-          className="terminal-window"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            padding: '0 4px',
-          }}
-        >
-          {navItems.map((item, i) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="terminal-prompt"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-                padding: '8px 12px',
-                fontSize: '0.8125rem',
-                opacity: active === i ? 1 : 0.4,
-                transition: 'opacity 0.2s',
-                cursor: 'pointer',
-                textDecoration: 'none',
-              }}
-            >
-              <span style={{ color: active === i ? 'var(--green)' : 'inherit' }}>
-                {active === i ? '❯' : '·'}
-              </span>
-              {item.label}
+          <p className="featured-tagline">{f.tagline}</p>
+          <p>{f.description}</p>
+          <p className="conclusion">→ {f.conclusion}</p>
+
+          <Tags tags={f.tags} limit={3} />
+
+          <div className="actions">
+            {f.links.demo && (
+              <a className="btn btn-primary" href={f.links.demo} target="_blank" rel="noopener noreferrer">
+                前往使用
+              </a>
+            )}
+            <a className={`btn ${f.links.demo ? '' : 'btn-primary'}`} href={`#/projects/${f.id}`}>
+              查看详情
             </a>
+            {f.links.github && (
+              <a className="btn" href={f.links.github} target="_blank" rel="noopener noreferrer">
+                GitHub
+              </a>
+            )}
+          </div>
+        </article>
+      </section>
+
+      <section className="section">
+        <h2>// 能力速览</h2>
+        <div className="skills">
+          {skills.map(s => (
+            <div className="skill" key={s.title}>
+              <strong>{s.title}</strong>
+              <span>{s.desc}</span>
+            </div>
           ))}
         </div>
-      </nav>
+      </section>
 
-      <div
-        style={{
-          opacity: booted ? 1 : 0,
-          transition: 'opacity 0.8s',
-        }}
-      >
-        {/* section id 只保留在各 section 组件内，避免重复 id */}
-        <Hero />
-
-        <div className="section-container section-padding">
-          <Projects />
+      <section className="section">
+        <h2>// 下一步</h2>
+        <p className="muted">想看完整项目列表，或直接邮件沟通？</p>
+        <div className="cta-row">
+          <a className="btn btn-primary" href="#/projects">
+            项目列表
+          </a>
+          <a className="btn" href="#/contact">
+            联系
+          </a>
+          <a className="btn" href="#/about#stack">
+            技术栈
+          </a>
         </div>
-
-        <div className="section-container section-padding">
-          <TechStack />
-        </div>
-
-        <div className="section-container section-padding">
-          <About />
-        </div>
-
-        <div className="section-container" style={{ paddingBottom: '4rem' }}>
-          <Footer />
-        </div>
-      </div>
-
-      {booted && <InteractiveTerminal onCommand={handleTerminalCommand} />}
+      </section>
     </>
   )
 }
