@@ -23,11 +23,6 @@ export interface Project {
   role: string
   /** 终端/搜索别名，例如 mindos -> my-wiki */
   aliases?: string[]
-  /**
-   * 占位数字：真站没有计数后端，点赞状态只落在访客本地 localStorage。
-   * 公开前要么接真实计数，要么收掉这个数字。
-   */
-  likes: number
 }
 
 export const projects: Project[] = [
@@ -54,7 +49,6 @@ export const projects: Project[] = [
     period: '2026/01 - 至今',
     status: '进行中',
     role: '独立开发 / AI 全栈',
-    likes: 128,
   },
   {
     id: 'quorum',
@@ -78,7 +72,6 @@ export const projects: Project[] = [
     period: '2026/04 - 至今',
     status: '进行中 · 功能迭代',
     role: '独立开发 / AI 全栈',
-    likes: 76,
   },
   {
     id: 'phoenix-ids',
@@ -118,7 +111,6 @@ export const projects: Project[] = [
     status: '已完成 · 论文 paper_v5',
     role: '独立开发 / 安全 · ML',
     aliases: ['phoenix', 'ids'],
-    likes: 54,
   },
   {
     id: 'study-copilot',
@@ -160,7 +152,6 @@ export const projects: Project[] = [
     status: '进行中 · 检索质量攻坚',
     role: '全栈 / AI 应用',
     aliases: ['study', 'copilot'],
-    likes: 63,
   },
   {
     id: 'mindflow-ai',
@@ -183,7 +174,6 @@ export const projects: Project[] = [
     status: '个人项目 · 本地代号 MindOS-Q',
     role: '独立开发 / 小程序',
     aliases: ['mindflow'],
-    likes: 31,
   },
   {
     id: 'my-wiki',
@@ -208,7 +198,6 @@ export const projects: Project[] = [
     status: '进行中 · 重构计划 Phase A-D',
     role: '独立开发 / 知识工程',
     aliases: ['mindos', 'wiki'],
-    likes: 88,
   },
 ]
 

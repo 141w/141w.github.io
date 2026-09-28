@@ -919,7 +919,6 @@ html.specular-on .btn.is-specular:focus-visible {
   --ph-idle: var(--muted);
   --ph-liked: var(--accent);
   --ph-text: var(--text);
-  --ph-roll: 350ms;
   --ph-stroke: 2.5px;
   --ph-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 
@@ -997,39 +996,6 @@ html.specular-on .btn.is-specular:focus-visible {
   }
 }
 
-.pulse-heart__count {
-  display: inline-flex;
-  font-family: var(--mono);
-  font-size: calc(var(--ph-size) * 0.46);
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: -0.1px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ph-text);
-}
-
-.pulse-heart__count > span {
-  display: block;
-  height: 1em;
-}
-
-.pulse-heart__slot {
-  position: relative;
-  overflow: hidden;
-}
-
-.pulse-heart__roll {
-  display: flex;
-  flex-direction: column;
-  transition: transform var(--ph-roll) var(--ph-ease-out);
-}
-
-.pulse-heart__roll > span {
-  display: block;
-  height: 1em;
-  line-height: 1;
-}
-
 .pulse-heart__sr {
   position: absolute;
   width: 1px;
@@ -1055,7 +1021,6 @@ html.specular-on .btn.is-specular:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .pulse-heart { transition: none; }
   .pulse-heart__heart { transition: color 200ms ease; }
-  .pulse-heart__roll { transition: none; }
 }
 
 /* ---------- 开屏：PixelSwap（原生移植） ---------- */

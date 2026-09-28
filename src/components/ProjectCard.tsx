@@ -22,7 +22,7 @@ export default function ProjectCard({ project, index, total }: ProjectCardProps)
           {project.title}
           {project.featured && <span className="badge">FEATURED</span>}
         </a>
-        <LikeButton id={project.id} name={project.title} likes={project.likes} />
+        <LikeButton id={project.id} name={project.title} />
       </div>
 
       <p className="ss-meta">

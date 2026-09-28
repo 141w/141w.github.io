@@ -31,7 +31,7 @@ export default function HomePage() {
                 <span className="badge">FEATURED</span>
               </a>
             </h3>
-            <LikeButton id={f.id} name={f.title} likes={f.likes} size={26} />
+            <LikeButton id={f.id} name={f.title} size={26} />
           </div>
 
           <p className="featured-tagline">{f.tagline}</p>

@@ -2,9 +2,11 @@
    自写弹簧驱动的里程表数字，每格 10 个数字上下位移。
    注意：数字节点读屏会念成 "0123456789…"，所以计数器整体 aria-hidden，
    真实值另由 .sr-only 播报。 */
-const VISIT_PLACES = [10000, 1000, 100, 10, 1];
-/* 占位值：样品无后端，真实来源待定（服务器 nginx 日志统计最靠谱） */
-const VISIT_COUNT = 12480;
+/* 位数按真实值算，避免固定 5/6 格在前面留一串 0 */
+const placesFor = value => {
+  const digits = Math.max(1, String(Math.floor(value)).length);
+  return Array.from({ length: digits }, (_, i) => 10 ** (digits - 1 - i));
+};
 
 function springTo(from, to, onUpdate, done) {
   let x = from;
@@ -36,7 +38,7 @@ function springTo(from, to, onUpdate, done) {
 function createCounter(el, opts) {
   const fontSize = opts.fontSize || 24;
   const height = fontSize + (opts.padding || 0);
-  const places = opts.places || VISIT_PLACES;
+  const places = opts.places || placesFor(opts.value);
   const reduced = !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
   let current = opts.value;
 
@@ -121,25 +123,45 @@ function createCounter(el, opts) {
   return { set, jump };
 }
 
-function initVisitCounter(el) {
-  if (!el || el.dataset.ready) return;
-  if (el) el.dataset.ready = "1";
-  const counter = createCounter(el, { value: VISIT_COUNT, fontSize: 22, gap: 3 });
+/**
+ * 真实访问数来自服务器定时生成的 stats.json（见 scripts/visit-stats.py）。
+ * 读不到就返回 null，调用方整块不显示——不编数字。
+ */
+export async function loadVisitStats(url) {
+  try {
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const n = Number(data.visits);
+    if (!Number.isFinite(n) || n < 0) return null;
+    return Math.floor(n);
+  } catch {
+    return null;
+  }
+}
+
+export function initVisitCounter(el, value) {
+  if (!el || !Number.isFinite(value) || el.dataset.ready) return null;
+  el.dataset.ready = "1";
+  const counter = createCounter(el, { value, fontSize: 22, gap: 3 });
+
   let seen = null;
   try {
     seen = sessionStorage.getItem("ww-visit-rolled");
   } catch {
     seen = null;
   }
-  if (seen) return;
+  if (seen) return counter;
+
   /* 首次进入从 0 滚到位；同一会话内不再重复（静态优先） */
   counter.jump(0);
-  requestAnimationFrame(() => counter.set(VISIT_COUNT, true));
+  requestAnimationFrame(() => counter.set(value, true));
   try {
     sessionStorage.setItem("ww-visit-rolled", "1");
   } catch {
     /* 无痕模式下写不进去，忽略 */
   }
+  return counter;
 }
 
-export { createCounter, initVisitCounter, VISIT_COUNT }
+export { createCounter }

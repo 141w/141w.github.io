@@ -24,7 +24,7 @@ export default function ProjectDetailPage({ id }: Props) {
             {p.title}
             {p.featured && <span className="badge">FEATURED</span>}
           </h1>
-          <LikeButton id={p.id} name={p.title} likes={p.likes} size={26} />
+          <LikeButton id={p.id} name={p.title} size={26} />
         </div>
         <p className="hero-tagline">{p.tagline}</p>
         <p className="muted">
