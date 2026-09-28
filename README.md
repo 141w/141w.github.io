@@ -86,10 +86,17 @@ server {
 }
 ```
 
-然后 `nginx -t && systemctl reload nginx`，再挂定时任务（每天 04:10 重算，含轮转日志与 .gz）：
+然后 `nginx -t && systemctl reload nginx`。脚本别放进 web root——`deploy.sh` 的
+`rsync --delete` 每次都把它当多余文件删掉，装到 `/usr/local/bin`：
+
+```bash
+scp scripts/visit-stats.py "$WEB_REMOTE":/usr/local/bin/
+```
+
+再挂定时任务（每天 04:10 重算，含轮转日志与 .gz）：
 
 ```cron
-10 4 * * * root python3 /var/www/ww/scripts/visit-stats.py \
+10 4 * * * root python3 /usr/local/bin/visit-stats.py \
   --log /var/log/nginx/ww.access.log --host wweiqi.devs.surf \
   --since 2026-09-01 --out /var/www/ww/stats.json >> /var/log/visit-stats.log 2>&1
 ```
